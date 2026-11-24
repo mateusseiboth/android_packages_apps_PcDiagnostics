@@ -15,7 +15,12 @@ class MemoryAndStorageTestsTest {
         override val size = size
         override fun get(index: Int) = cells[index]
         override fun set(index: Int, value: Long) {
-            cells[index] = if (index == badCell) value and 8L.inv() else value
+            cells[index] = value and (STUCK_BIT_CLEARED.takeIf { index == badCell } ?: ALL_BITS)
+        }
+
+        private companion object {
+            const val STUCK_BIT_CLEARED = 8L.inv()
+            const val ALL_BITS = -1L
         }
     }
 
