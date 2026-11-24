@@ -3,6 +3,7 @@ package org.lineageos.pcdiagnostics.ui
 import org.lineageos.pcdiagnostics.R
 import org.lineageos.pcdiagnostics.core.AudioDeviceKind
 import org.lineageos.pcdiagnostics.core.BatteryStatus
+import org.lineageos.pcdiagnostics.core.CameraFacing
 import org.lineageos.pcdiagnostics.core.FindingKey
 import org.lineageos.pcdiagnostics.core.InputKind
 import org.lineageos.pcdiagnostics.core.KeyboardLayout
@@ -34,6 +35,7 @@ object Texts {
         TestName.INPUT_KEYBOARD_KEYS to R.string.test_input_keyboard_keys,
         TestName.AUDIO_SPEAKERS to R.string.test_audio_speakers,
         TestName.AUDIO_MICROPHONE to R.string.test_audio_microphone,
+        TestName.CAMERA to R.string.test_camera,
     )
 
     val FINDINGS = mapOf(
@@ -80,6 +82,10 @@ object Texts {
         FindingKey.AUDIO_RECORD_FAILED to R.string.finding_audio_record_failed,
         FindingKey.AUDIO_SILENT to R.string.finding_audio_silent,
         FindingKey.AUDIO_RECORDED_LEVEL to R.string.finding_audio_recorded_level,
+        FindingKey.CAMERA_NONE to R.string.finding_camera_none,
+        FindingKey.CAMERA_NO_PERMISSION to R.string.finding_camera_no_permission,
+        FindingKey.CAMERA_NO_FRAMES to R.string.finding_camera_no_frames,
+        FindingKey.CAMERA_DARK to R.string.finding_camera_dark,
     )
 
     val SUITE_STATUSES = mapOf(
@@ -171,5 +177,11 @@ object Texts {
         SpeakerChannel.BACK_CENTER to R.string.channel_back_center,
         SpeakerChannel.SIDE_LEFT to R.string.channel_side_left,
         SpeakerChannel.SIDE_RIGHT to R.string.channel_side_right,
+    )
+
+    val CAMERA_FACINGS = mapOf(
+        CameraFacing.FRONT to R.string.camera_front,
+        CameraFacing.BACK to R.string.camera_back,
+        CameraFacing.EXTERNAL to R.string.camera_external,
     )
 }

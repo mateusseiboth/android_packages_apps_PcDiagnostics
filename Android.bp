@@ -1,4 +1,5 @@
-// PcDiagnostics: hardware checks for the PC (CPU, memory, storage, battery, network), like ChromeOS Diagnostics.
+// PcDiagnostics: hardware checks for the PC (CPU, memory, storage, battery, network, input, audio, camera),
+// like ChromeOS Diagnostics.
 // The checks, parsers and test runner live in core/ and are tested on the host.
 package {
     default_applicable_licenses: ["Android-Apache-2.0"],
@@ -46,6 +47,10 @@ android_app {
         "androidx.compose.material3_material3",
         "androidx.compose.material_material-icons-core",
         "androidx.compose.material_material-icons-extended",
+        "androidx.camera_camera-core",
+        "androidx.camera_camera-camera2",
+        "androidx.camera_camera-lifecycle",
+        "androidx.camera_camera-compose",
         "kotlinx_coroutines_android",
     ],
     optimize: {

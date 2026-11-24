@@ -11,6 +11,9 @@
     <!-- Audio page: the microphone test and the recorder (runtime permission, asked on the page). -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <!-- Camera page: the preview and the camera test (runtime permission, asked on the page). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
 
     <!-- Settings (system uid) reads the About rows' summaries from HardwareSummaryProvider. -->
     <permission

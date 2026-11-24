@@ -12,7 +12,8 @@ INTER=$TOP/out/soong/.intermediates
 rm -rf "$WORK" && mkdir -p "$WORK/libs" "$WORK/gen"
 
 for a in $(cd "$M" && ls -d compose/*/* lifecycle/* activity/* savedstate/* navigationevent/* core/core \
-           collection/collection-jvm annotation/annotation-jvm annotation/annotation-experimental); do
+           collection/collection-jvm annotation/annotation-jvm annotation/annotation-experimental \
+           camera/camera-core camera/camera-lifecycle camera/camera-compose camera/viewfinder/viewfinder-*); do
   v=$(ls "$M/$a" | sort -V | tail -1)
   for f in "$M/$a/$v"/*; do
     case "$f" in
@@ -34,6 +35,8 @@ PY
 CP=$(ls "$WORK"/libs/*.jar | tr '\n' ':')
 CP=$CP$INTER/external/kotlinx.coroutines/kotlinx_coroutines/linux_glibc_common/combined/kotlinx_coroutines.jar
 CP=$CP:$INTER/frameworks/base/framework-minus-apex/android_common/combined/framework.jar
+# CameraX returns ListenableFuture (guava-listenablefuture-prebuilt-jar in Soong).
+CP=$CP:$TOP/prebuilts/tools/common/m2/repository/com/google/guava/guava/listenablefuture/1.0/listenablefuture-1.0.jar
 # ConnectivityManager and WifiManager live in their mainline modules.
 for m in packages/modules/Connectivity/framework/framework-connectivity.impl packages/modules/Wifi/framework/framework-wifi.impl; do
   CP=$CP:$(ls "$INTER/$m"/android_common*/combined/*.jar "$INTER/$m"/android_common*/turbine-combined/*.jar 2>/dev/null | head -1)

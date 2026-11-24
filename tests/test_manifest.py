@@ -66,6 +66,7 @@ class AboutRowsTest(unittest.TestCase):
 # Runtime permissions and the hardware they need: the app still installs on a PC without it.
 RUNTIME_PERMISSIONS = {
     "android.permission.RECORD_AUDIO": "android.hardware.microphone",
+    "android.permission.CAMERA": "android.hardware.camera.any",
 }
 
 

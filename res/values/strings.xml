@@ -216,4 +216,21 @@
     <string name="finding_audio_record_failed">Can\'t record sound. Close other apps using the microphone and try again.</string>
     <string name="finding_audio_silent">The microphone recorded only silence. Check that it is not muted.</string>
     <string name="finding_audio_recorded_level">Loudest sound: %1$d dB.</string>
+    <string name="page_camera">Camera</string>
+    <string name="page_camera_subtitle">Cameras, preview</string>
+    <string name="camera_title">Cameras</string>
+    <string name="camera_front">Front camera</string>
+    <string name="camera_back">Back camera</string>
+    <string name="camera_external">External camera</string>
+    <string name="camera_size">%1$d × %2$d, %3$.1f MP</string>
+    <string name="camera_none">No camera found. Connect a camera.</string>
+    <string name="camera_permission_needed">Allow camera access to see the preview.</string>
+    <string name="camera_permission_denied">Camera access is off. Turn it on in the app settings.</string>
+    <string name="camera_open_failed">Can\'t open this camera. Close other apps using it and try again.</string>
+    <string name="run_camera">Run camera test</string>
+    <string name="test_camera">Camera test</string>
+    <string name="finding_camera_none">No camera found. Connect a camera.</string>
+    <string name="finding_camera_no_permission">Camera access is off. Allow it and run the test again.</string>
+    <string name="finding_camera_no_frames">The camera sent no picture. Close other apps using it and try again.</string>
+    <string name="finding_camera_dark">The picture is very dark. Check that nothing covers the camera.</string>
 </resources>
