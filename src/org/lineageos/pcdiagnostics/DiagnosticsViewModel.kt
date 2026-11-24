@@ -34,9 +34,9 @@ import org.lineageos.pcdiagnostics.core.StorageSpace
 import org.lineageos.pcdiagnostics.core.StorageTest
 import org.lineageos.pcdiagnostics.core.StressTest
 
-enum class SuiteKind { CPU, MEMORY, STORAGE, BATTERY, CONNECTIVITY, INPUT }
+enum class SuiteKind { CPU, MEMORY, STORAGE, BATTERY, CONNECTIVITY, INPUT, SPEAKERS, MICROPHONE }
 
-enum class Page { OVERVIEW, CONNECTIVITY, INPUT }
+enum class Page { OVERVIEW, CONNECTIVITY, INPUT, AUDIO }
 
 /** What the cards show, read once a second while the screen is visible. */
 data class LiveReadings(
@@ -65,6 +65,7 @@ class DiagnosticsViewModel(application: Application) : AndroidViewModel(applicat
     }.flowOn(Dispatchers.IO).stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), LiveReadings())
 
     val input = InputBench(application, viewModelScope)
+    val audio = AudioBench(application, viewModelScope)
 
     private val _page = MutableStateFlow(Page.OVERVIEW)
     val page: StateFlow<Page> = _page.asStateFlow()
@@ -76,6 +77,8 @@ class DiagnosticsViewModel(application: Application) : AndroidViewModel(applicat
         SuiteKind.BATTERY to buildController(::buildBatteryTests),
         SuiteKind.CONNECTIVITY to buildController(::buildConnectivityTests),
         SuiteKind.INPUT to input.suite,
+        SuiteKind.SPEAKERS to audio.speakerSuite,
+        SuiteKind.MICROPHONE to audio.microphoneSuite,
     )
 
     /** PcTaskManager's launcher intent, or null when it is not installed. */

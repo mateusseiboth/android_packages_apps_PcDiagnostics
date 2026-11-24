@@ -1,4 +1,5 @@
-"""Settings > About rows: three tiles whose summaries come from the app's provider."""
+"""Settings > About rows (three tiles whose summaries come from the app's provider) and the runtime
+permissions of the audio and camera pages."""
 import re
 import unittest
 import xml.etree.ElementTree as ET
@@ -60,6 +61,32 @@ class AboutRowsTest(unittest.TestCase):
         self.assertEqual(provider.get(f"{ANDROID}readPermission"), PERMISSION)
         declared = {p.get(f"{ANDROID}name"): p.get(f"{ANDROID}protectionLevel") for p in read_manifest().findall("permission")}
         self.assertEqual(declared.get(PERMISSION), "signature")
+
+
+# Runtime permissions and the hardware they need: the app still installs on a PC without it.
+RUNTIME_PERMISSIONS = {
+    "android.permission.RECORD_AUDIO": "android.hardware.microphone",
+}
+
+
+class RuntimePermissionsTest(unittest.TestCase):
+    def setUp(self):
+        manifest = read_manifest()
+        self.permissions = {p.get(f"{ANDROID}name") for p in manifest.findall("uses-permission")}
+        self.features = {f.get(f"{ANDROID}name"): f.get(f"{ANDROID}required") for f in manifest.findall("uses-feature")}
+
+    def test_each_page_asks_for_its_permission(self):
+        for permission in RUNTIME_PERMISSIONS:
+            self.assertIn(permission, self.permissions)
+
+    def test_the_hardware_is_optional(self):
+        for permission, feature in RUNTIME_PERMISSIONS.items():
+            self.assertEqual(self.features.get(feature), "false", feature)
+
+    def test_none_is_on_the_privileged_allowlist(self):
+        allowlist = ET.parse(HERE / "etc/privapp-permissions-pcdiagnostics.xml").getroot()
+        listed = {p.get("name") for p in allowlist.iter("permission")}
+        self.assertFalse(listed & set(RUNTIME_PERMISSIONS))
 
 
 if __name__ == "__main__":

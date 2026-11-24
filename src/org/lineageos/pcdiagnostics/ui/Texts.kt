@@ -1,6 +1,7 @@
 package org.lineageos.pcdiagnostics.ui
 
 import org.lineageos.pcdiagnostics.R
+import org.lineageos.pcdiagnostics.core.AudioDeviceKind
 import org.lineageos.pcdiagnostics.core.BatteryStatus
 import org.lineageos.pcdiagnostics.core.FindingKey
 import org.lineageos.pcdiagnostics.core.InputKind
@@ -9,6 +10,7 @@ import org.lineageos.pcdiagnostics.core.NetworkKind
 import org.lineageos.pcdiagnostics.core.PointerButton
 import org.lineageos.pcdiagnostics.core.RateKind
 import org.lineageos.pcdiagnostics.core.SignalLevel
+import org.lineageos.pcdiagnostics.core.SpeakerChannel
 import org.lineageos.pcdiagnostics.core.SuiteStatus
 import org.lineageos.pcdiagnostics.core.TestName
 import org.lineageos.pcdiagnostics.core.WifiSecurity
@@ -30,6 +32,8 @@ object Texts {
         TestName.NETWORK_WIFI to R.string.test_network_wifi,
         TestName.INPUT_DEVICES to R.string.test_input_devices,
         TestName.INPUT_KEYBOARD_KEYS to R.string.test_input_keyboard_keys,
+        TestName.AUDIO_SPEAKERS to R.string.test_audio_speakers,
+        TestName.AUDIO_MICROPHONE to R.string.test_audio_microphone,
     )
 
     val FINDINGS = mapOf(
@@ -67,6 +71,15 @@ object Texts {
         FindingKey.INPUT_KEYS_NOT_TESTED to R.string.finding_input_keys_not_tested,
         FindingKey.INPUT_KEYS_MISSED to R.string.finding_input_keys_missed,
         FindingKey.INPUT_KEYS_ALL_PRESSED to R.string.finding_input_keys_all_pressed,
+        FindingKey.AUDIO_NO_OUTPUT to R.string.finding_audio_no_output,
+        FindingKey.AUDIO_MUTED to R.string.finding_audio_muted,
+        FindingKey.AUDIO_PLAYBACK_FAILED to R.string.finding_audio_playback_failed,
+        FindingKey.AUDIO_CHANNELS_PLAYED to R.string.finding_audio_channels_played,
+        FindingKey.AUDIO_NO_PERMISSION to R.string.finding_audio_no_permission,
+        FindingKey.AUDIO_NO_INPUT to R.string.finding_audio_no_input,
+        FindingKey.AUDIO_RECORD_FAILED to R.string.finding_audio_record_failed,
+        FindingKey.AUDIO_SILENT to R.string.finding_audio_silent,
+        FindingKey.AUDIO_RECORDED_LEVEL to R.string.finding_audio_recorded_level,
     )
 
     val SUITE_STATUSES = mapOf(
@@ -134,5 +147,29 @@ object Texts {
         PointerButton.PRIMARY to R.string.button_primary,
         PointerButton.SECONDARY to R.string.button_secondary,
         PointerButton.TERTIARY to R.string.button_tertiary,
+    )
+
+    val AUDIO_KINDS = mapOf(
+        AudioDeviceKind.BUILT_IN to R.string.audio_kind_built_in,
+        AudioDeviceKind.HEADPHONES to R.string.audio_kind_headphones,
+        AudioDeviceKind.USB to R.string.audio_kind_usb,
+        AudioDeviceKind.HDMI to R.string.audio_kind_hdmi,
+        AudioDeviceKind.BLUETOOTH to R.string.audio_kind_bluetooth,
+        AudioDeviceKind.LINE to R.string.audio_kind_line,
+        AudioDeviceKind.OTHER to R.string.audio_kind_other,
+    )
+
+    val SPEAKER_CHANNELS = mapOf(
+        SpeakerChannel.FRONT_LEFT to R.string.channel_front_left,
+        SpeakerChannel.FRONT_RIGHT to R.string.channel_front_right,
+        SpeakerChannel.FRONT_CENTER to R.string.channel_front_center,
+        SpeakerChannel.LOW_FREQUENCY to R.string.channel_low_frequency,
+        SpeakerChannel.BACK_LEFT to R.string.channel_back_left,
+        SpeakerChannel.BACK_RIGHT to R.string.channel_back_right,
+        SpeakerChannel.FRONT_LEFT_OF_CENTER to R.string.channel_front_left_of_center,
+        SpeakerChannel.FRONT_RIGHT_OF_CENTER to R.string.channel_front_right_of_center,
+        SpeakerChannel.BACK_CENTER to R.string.channel_back_center,
+        SpeakerChannel.SIDE_LEFT to R.string.channel_side_left,
+        SpeakerChannel.SIDE_RIGHT to R.string.channel_side_right,
     )
 }

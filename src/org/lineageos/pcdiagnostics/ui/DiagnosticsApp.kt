@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Memory
+import androidx.compose.material.icons.outlined.Speaker
 import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -54,6 +55,7 @@ private val DESTINATIONS = linkedMapOf(
     Page.OVERVIEW to Destination(R.string.page_overview, R.string.page_overview_subtitle, Icons.Outlined.Dashboard),
     Page.CONNECTIVITY to Destination(R.string.page_connectivity, R.string.page_connectivity_subtitle, Icons.Outlined.Wifi),
     Page.INPUT to Destination(R.string.page_input, R.string.page_input_subtitle, Icons.Outlined.Keyboard),
+    Page.AUDIO to Destination(R.string.page_audio, R.string.page_audio_subtitle, Icons.Outlined.Speaker),
 )
 
 private val TASK_MANAGER = Destination(R.string.page_task_manager, R.string.page_task_manager_subtitle, Icons.Outlined.Memory)
@@ -62,6 +64,7 @@ private val PAGES: Map<Page, @Composable (DiagnosticsViewModel, (Intent) -> Unit
     Page.OVERVIEW to { viewModel, _ -> OverviewPage(viewModel) },
     Page.CONNECTIVITY to { viewModel, onOpen -> ConnectivityPage(viewModel, onOpen) },
     Page.INPUT to { viewModel, _ -> InputPage(viewModel) },
+    Page.AUDIO to { viewModel, onOpen -> AudioPage(viewModel, onOpen) },
 )
 
 private val WIDE_WINDOW = 840.dp

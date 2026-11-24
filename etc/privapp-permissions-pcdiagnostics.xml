@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Privileged permissions of PcDiagnostics (system_ext priv-app). Its permissions are all normal or
-     signature level (INTERNET, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE, NETWORK_SETTINGS), so none needs
-     the allowlist; the entry is kept so a privileged permission added later has its place. -->
+<!-- Privileged permissions of PcDiagnostics (system_ext priv-app). Its permissions are normal or
+     signature level (INTERNET, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE, NETWORK_SETTINGS) or runtime ones
+     the person grants on the page (RECORD_AUDIO), so none needs the allowlist; the entry is kept so a
+     privileged permission added later has its place. -->
 <permissions>
     <privapp-permissions package="org.lineageos.pcdiagnostics" />
 </permissions>

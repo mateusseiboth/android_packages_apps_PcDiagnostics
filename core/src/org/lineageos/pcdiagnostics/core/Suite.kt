@@ -16,6 +16,8 @@ enum class TestName {
     NETWORK_WIFI,
     INPUT_DEVICES,
     INPUT_KEYBOARD_KEYS,
+    AUDIO_SPEAKERS,
+    AUDIO_MICROPHONE,
 }
 
 /** What a test found. The UI turns each key into a sentence, with [Finding.args] in it. */
@@ -54,6 +56,15 @@ enum class FindingKey {
     INPUT_KEYS_NOT_TESTED,
     INPUT_KEYS_MISSED,
     INPUT_KEYS_ALL_PRESSED,
+    AUDIO_NO_OUTPUT,
+    AUDIO_MUTED,
+    AUDIO_PLAYBACK_FAILED,
+    AUDIO_CHANNELS_PLAYED,
+    AUDIO_NO_PERMISSION,
+    AUDIO_NO_INPUT,
+    AUDIO_RECORD_FAILED,
+    AUDIO_SILENT,
+    AUDIO_RECORDED_LEVEL,
 }
 
 data class Finding(val key: FindingKey, val args: List<Any> = emptyList())
