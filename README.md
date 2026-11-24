@@ -78,3 +78,10 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
   `sysfs_thermal`, hwmon and power supply nodes; the rules are not written.
 - The storage read speed comes from the page cache right after writing, so it measures memory more than
   the disk; the check is about data coming back intact.
+
+## Credits
+
+- [LineageOS](https://lineageos.org) ([GitHub](https://github.com/LineageOS)): the base system and build this is part of.
+- [Android Open Source Project](https://source.android.com): the platform, its APIs and build system.
+
+Thanks to everyone behind these projects. Files taken from them keep their original licenses and copyright notices.
