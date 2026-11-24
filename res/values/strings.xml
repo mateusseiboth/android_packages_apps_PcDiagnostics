@@ -4,6 +4,12 @@
     <string name="settings_summary">Check the hardware of this PC</string>
     <string name="settings_battery_title">Battery health</string>
     <string name="settings_battery_summary">Check your battery</string>
+    <string name="about_cpu_title">CPU</string>
+    <string name="about_cpu_summary">%1$s, %2$d cores, %3$d threads</string>
+    <string name="about_memory_title">RAM</string>
+    <string name="about_memory_summary">%1$d GB</string>
+    <string name="about_storage_title">Storage</string>
+    <string name="about_storage_summary">%1$s used of %2$s</string>
     <string name="navigation_menu">Navigation menu</string>
     <string name="page_overview">Overview</string>
     <string name="page_overview_subtitle">Battery, CPU, memory, storage</string>

@@ -29,6 +29,17 @@ A navigation drawer (kept open on wide windows, behind a menu button on narrow o
 Every test reports Passed, Warning or Failed with a sentence; "See report" lists them. "Stop test" cancels
 the suite. Settings gets two tiles: **System > Diagnostics** and **Battery > Battery health**.
 
+**Settings > About** gets three rows under the device name, each opening the overview:
+
+- **CPU**: model, cores and threads (`/proc/cpuinfo`; cores are the distinct physical and core ids).
+- **RAM**: total memory, rounded up to whole GB (the kernel keeps part of the installed memory).
+- **Storage**: used and total on `/data`.
+
+They are injected tiles (`com.android.settings.category.ia.my_device_info`, group `basic_info_category`)
+on activity aliases of the main activity; their summaries come from `HardwareSummaryProvider`, which
+Settings calls with the method in each row's `summary_uri` (`cpu`, `memory`, `storage`; `HardwareRow` in
+core).
+
 ## Where the numbers come from
 
 `/proc/stat`, `/proc/cpuinfo`, `/proc/meminfo`, `/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq`,
@@ -42,22 +53,26 @@ portal check page is the system's own (`captive_portal_https_url`, AOSP default 
 `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE` (normal) and `NETWORK_SETTINGS` (signature,
 granted by the platform certificate): with it `WifiManager` returns the SSID and BSSID without location
 access. None is a privileged permission, so `etc/privapp-permissions-pcdiagnostics.xml` lists none.
-`largeHeap` gives the memory test room.
+`largeHeap` gives the memory test room. The app defines
+`org.lineageos.pcdiagnostics.permission.READ_HARDWARE_SUMMARY` (signature) as the read permission of
+`HardwareSummaryProvider`; Settings runs as the system uid and passes it.
 
 ## Code
 
 - `core/`: plain Kotlin, no Android. `SuiteRunner`/`SuiteState` (tests in order, worst outcome wins,
   cancel), the checks (`StressTest`, `CacheTest`, `FloatingPointAccuracyTest`, `PrimeSearchTest`,
   `MemoryTest`, `StorageTest`, `BatteryRateTest`, `LocalNetworkTest`, `NameResolutionTest`,
-  `InternetConnectivityTest`, `WifiTest`), `ConnectivitySuite`, `BatteryInfo`, readers and `CpuMonitor`.
+  `InternetConnectivityTest`, `WifiTest`), `ConnectivitySuite`, `BatteryInfo`, readers, `CpuMonitor` and
+  `HardwareRow`.
 - `src/`: `DiagnosticsViewModel` (readings once a second while visible, one `SuiteController` per card),
-  `SystemSource`, `NetworkReader`/`AndroidNetworkProbe`, and the Compose UI in `ui/`.
+  `SystemSource`, `NetworkReader`/`AndroidNetworkProbe`, `HardwareSummaryProvider` (Settings > About
+  summaries), and the Compose UI in `ui/`.
 
 ## Tests
 
 ```sh
 core/run_tests.sh                        # JUnit tests of core/, with external/kotlinc and JUnit from prebuilts
-python3 -m unittest discover -s tests    # UI strings: both languages, same placeholders, no em dash
+python3 -m unittest discover -s tests    # UI strings (both languages, same placeholders, no em dash), Settings rows in the manifest
 tools/typecheck.sh                       # compiles core + Compose UI against the prebuilts (needs a previous build's out/)
 ```
 
@@ -72,7 +87,6 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
 
 - Not built or run on a device yet: only the host tests and the Compose typecheck have run.
 - Input (keyboard, touchpad, touchscreen), audio (speakers, microphone) and camera pages.
-- Settings "About" entries for CPU, RAM and storage information.
 - "Learn more" links and a help page.
 - SELinux: the device is permissive. Enforcing needs `system_app`/`platform_app` read access to
   `sysfs_thermal`, hwmon and power supply nodes; the rules are not written.
