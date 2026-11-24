@@ -20,7 +20,7 @@ class StringsTest(unittest.TestCase):
     def test_placeholders_match(self):
         english, portuguese = (read_strings(f) for f in LANGUAGES)
         for name, text in english.items():
-            self.assertEqual(sorted(re.findall(r"%\d\$[sd]", text)), sorted(re.findall(r"%\d\$[sd]", portuguese[name])),
+            self.assertEqual(sorted(re.findall(r"%\d\$(?:\.\d+)?[sdf]", text)), sorted(re.findall(r"%\d\$(?:\.\d+)?[sdf]", portuguese[name])),
                              name)
 
     def test_no_em_dash(self):
