@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Memory
 import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.material3.DrawerValue
@@ -52,6 +53,7 @@ private class Destination(val title: Int, val subtitle: Int, val icon: ImageVect
 private val DESTINATIONS = linkedMapOf(
     Page.OVERVIEW to Destination(R.string.page_overview, R.string.page_overview_subtitle, Icons.Outlined.Dashboard),
     Page.CONNECTIVITY to Destination(R.string.page_connectivity, R.string.page_connectivity_subtitle, Icons.Outlined.Wifi),
+    Page.INPUT to Destination(R.string.page_input, R.string.page_input_subtitle, Icons.Outlined.Keyboard),
 )
 
 private val TASK_MANAGER = Destination(R.string.page_task_manager, R.string.page_task_manager_subtitle, Icons.Outlined.Memory)
@@ -59,6 +61,7 @@ private val TASK_MANAGER = Destination(R.string.page_task_manager, R.string.page
 private val PAGES: Map<Page, @Composable (DiagnosticsViewModel, (Intent) -> Unit) -> Unit> = mapOf(
     Page.OVERVIEW to { viewModel, _ -> OverviewPage(viewModel) },
     Page.CONNECTIVITY to { viewModel, onOpen -> ConnectivityPage(viewModel, onOpen) },
+    Page.INPUT to { viewModel, _ -> InputPage(viewModel) },
 )
 
 private val WIDE_WINDOW = 840.dp

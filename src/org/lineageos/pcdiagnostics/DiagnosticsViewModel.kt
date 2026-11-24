@@ -34,9 +34,9 @@ import org.lineageos.pcdiagnostics.core.StorageSpace
 import org.lineageos.pcdiagnostics.core.StorageTest
 import org.lineageos.pcdiagnostics.core.StressTest
 
-enum class SuiteKind { CPU, MEMORY, STORAGE, BATTERY, CONNECTIVITY }
+enum class SuiteKind { CPU, MEMORY, STORAGE, BATTERY, CONNECTIVITY, INPUT }
 
-enum class Page { OVERVIEW, CONNECTIVITY }
+enum class Page { OVERVIEW, CONNECTIVITY, INPUT }
 
 /** What the cards show, read once a second while the screen is visible. */
 data class LiveReadings(
@@ -64,6 +64,8 @@ class DiagnosticsViewModel(application: Application) : AndroidViewModel(applicat
         }
     }.flowOn(Dispatchers.IO).stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), LiveReadings())
 
+    val input = InputBench(application, viewModelScope)
+
     private val _page = MutableStateFlow(Page.OVERVIEW)
     val page: StateFlow<Page> = _page.asStateFlow()
 
@@ -73,6 +75,7 @@ class DiagnosticsViewModel(application: Application) : AndroidViewModel(applicat
         SuiteKind.STORAGE to buildController { listOf(StorageTest(application.cacheDir, readSpace = system::readStorage)) },
         SuiteKind.BATTERY to buildController(::buildBatteryTests),
         SuiteKind.CONNECTIVITY to buildController(::buildConnectivityTests),
+        SuiteKind.INPUT to input.suite,
     )
 
     /** PcTaskManager's launcher intent, or null when it is not installed. */

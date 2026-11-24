@@ -14,6 +14,8 @@ enum class TestName {
     NETWORK_NAME_RESOLUTION,
     NETWORK_INTERNET,
     NETWORK_WIFI,
+    INPUT_DEVICES,
+    INPUT_KEYBOARD_KEYS,
 }
 
 /** What a test found. The UI turns each key into a sentence, with [Finding.args] in it. */
@@ -46,6 +48,12 @@ enum class FindingKey {
     NETWORK_NO_WIFI_DETAILS,
     NETWORK_WEAK_SIGNAL,
     NETWORK_OPEN_WIFI,
+    INPUT_NO_KEYBOARD,
+    INPUT_NO_POINTER,
+    INPUT_DEVICES_FOUND,
+    INPUT_KEYS_NOT_TESTED,
+    INPUT_KEYS_MISSED,
+    INPUT_KEYS_ALL_PRESSED,
 }
 
 data class Finding(val key: FindingKey, val args: List<Any> = emptyList())

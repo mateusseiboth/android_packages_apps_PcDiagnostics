@@ -3,7 +3,10 @@ package org.lineageos.pcdiagnostics.ui
 import org.lineageos.pcdiagnostics.R
 import org.lineageos.pcdiagnostics.core.BatteryStatus
 import org.lineageos.pcdiagnostics.core.FindingKey
+import org.lineageos.pcdiagnostics.core.InputKind
+import org.lineageos.pcdiagnostics.core.KeyboardLayout
 import org.lineageos.pcdiagnostics.core.NetworkKind
+import org.lineageos.pcdiagnostics.core.PointerButton
 import org.lineageos.pcdiagnostics.core.RateKind
 import org.lineageos.pcdiagnostics.core.SignalLevel
 import org.lineageos.pcdiagnostics.core.SuiteStatus
@@ -25,6 +28,8 @@ object Texts {
         TestName.NETWORK_NAME_RESOLUTION to R.string.test_network_name_resolution,
         TestName.NETWORK_INTERNET to R.string.test_network_internet,
         TestName.NETWORK_WIFI to R.string.test_network_wifi,
+        TestName.INPUT_DEVICES to R.string.test_input_devices,
+        TestName.INPUT_KEYBOARD_KEYS to R.string.test_input_keyboard_keys,
     )
 
     val FINDINGS = mapOf(
@@ -56,6 +61,12 @@ object Texts {
         FindingKey.NETWORK_NO_WIFI_DETAILS to R.string.finding_network_no_wifi_details,
         FindingKey.NETWORK_WEAK_SIGNAL to R.string.finding_network_weak_signal,
         FindingKey.NETWORK_OPEN_WIFI to R.string.finding_network_open_wifi,
+        FindingKey.INPUT_NO_KEYBOARD to R.string.finding_input_no_keyboard,
+        FindingKey.INPUT_NO_POINTER to R.string.finding_input_no_pointer,
+        FindingKey.INPUT_DEVICES_FOUND to R.string.finding_input_devices_found,
+        FindingKey.INPUT_KEYS_NOT_TESTED to R.string.finding_input_keys_not_tested,
+        FindingKey.INPUT_KEYS_MISSED to R.string.finding_input_keys_missed,
+        FindingKey.INPUT_KEYS_ALL_PRESSED to R.string.finding_input_keys_all_pressed,
     )
 
     val SUITE_STATUSES = mapOf(
@@ -100,5 +111,28 @@ object Texts {
         WifiSecurity.OPEN to R.string.security_open,
         WifiSecurity.SECURED to R.string.security_secured,
         WifiSecurity.UNKNOWN to R.string.security_unknown,
+    )
+
+    val INPUT_KINDS = mapOf(
+        InputKind.KEYBOARD to R.string.input_keyboard,
+        InputKind.TOUCHPAD to R.string.input_touchpad,
+        InputKind.TOUCHSCREEN to R.string.input_touchscreen,
+        InputKind.MOUSE to R.string.input_mouse,
+        InputKind.OTHER to R.string.input_other,
+    )
+
+    /** Built-in or external, by whether the device is external. */
+    val CONNECTIONS = mapOf(false to R.string.input_built_in, true to R.string.input_external)
+
+    val KEYBOARD_LAYOUTS = mapOf(
+        KeyboardLayout.US_ANSI to R.string.layout_us_ansi,
+        KeyboardLayout.ISO to R.string.layout_iso,
+        KeyboardLayout.ABNT2 to R.string.layout_abnt2,
+    )
+
+    val POINTER_BUTTONS = mapOf(
+        PointerButton.PRIMARY to R.string.button_primary,
+        PointerButton.SECONDARY to R.string.button_secondary,
+        PointerButton.TERTIARY to R.string.button_tertiary,
     )
 }
