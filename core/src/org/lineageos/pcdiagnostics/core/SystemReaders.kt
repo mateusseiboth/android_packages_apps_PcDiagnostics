@@ -38,13 +38,25 @@ data class CpuUsage(val userPercent: Double, val systemPercent: Double) {
     }
 }
 
-data class CpuModel(val name: String, val threads: Int) {
+private val BLANK_LINE = Regex("\\n\\s*\\n")
+
+/** The processor's name, its hardware threads and the physical cores behind them. */
+data class CpuModel(val name: String, val threads: Int, val cores: Int = threads) {
     companion object {
         fun parse(cpuinfo: String): CpuModel {
             val fields = parseColonFields(cpuinfo)
             val name = fields.firstOrNull { it.first == "model name" }?.second.orEmpty()
-            return CpuModel(name.replace(WHITESPACE, " "), fields.count { it.first == "processor" }.coerceAtLeast(1))
+            val threads = fields.count { it.first == "processor" }.coerceAtLeast(1)
+            return CpuModel(name.replace(WHITESPACE, " "), threads, countCores(cpuinfo) ?: threads)
         }
+
+        /** Distinct (physical id, core id) pairs over the processor blocks; null when none has a core id. */
+        private fun countCores(cpuinfo: String): Int? = cpuinfo.split(BLANK_LINE)
+            .map { block -> parseColonFields(block).toMap() }
+            .mapNotNull { block -> block["core id"]?.let { core -> block["physical id"] to core } }
+            .distinct()
+            .size
+            .takeIf { it > 0 }
     }
 }
 
@@ -62,7 +74,12 @@ data class MemorySummary(val totalBytes: Long, val availableBytes: Long) {
     val usedBytes get() = totalBytes - availableBytes
     val usedFraction get() = usedBytes.toFloat() / totalBytes.coerceAtLeast(1)
 
+    /** The installed size as people know it: the kernel keeps part of it, so round up to whole GiB. */
+    val totalGigabytesRoundedUp get() = ((totalBytes + GIB - 1) / GIB).toInt()
+
     companion object {
+        private const val GIB = 1L shl 30
+
         fun parse(meminfo: String): MemorySummary {
             val fields = parseColonFields(meminfo).toMap()
             val kilobytes = { key: String -> fields[key]?.split(WHITESPACE)?.first()?.toLongOrNull() ?: 0L }
