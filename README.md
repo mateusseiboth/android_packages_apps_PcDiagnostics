@@ -1,7 +1,8 @@
 # PcDiagnostics
 
 Hardware checks for LineageOS for PCs, in the style of ChromeOS Diagnostics: live CPU, memory, storage,
-battery and network readings, and test suites that say what is wrong and what to do. Written from scratch
+battery and network readings, testers for the keyboard, touchpad, touchscreen, speakers, microphone and
+camera, and test suites that say what is wrong and what to do. Written from scratch
 in Kotlin and Jetpack Compose (Material 3, wallpaper colors).
 
 ## What it shows
@@ -24,6 +25,27 @@ A navigation drawer (kept open on wide windows, behind a menu button on narrow o
   addresses, gateway and name servers. Tests: local network (gateway answers), name resolution (server
   present, answers, under 400 ms), internet (the captive portal check page answers 204, under 1 s) and,
   on Wi-Fi, the link (signal not weak, network not open). A button opens the network settings.
+- **Input**: one card each for keyboards, touchpads and touchscreens, every device with a **Test** button,
+  then every input device with its kind, built-in or external, and vendor:product id.
+  - Keyboard tester: the keyboard drawn key by key (US ANSI, ISO or Brazilian ABNT2; the default follows
+    the system's country, ABNT2 in Brazil), with the chosen device's own legends. Held keys light up,
+    pressed ones stay marked; keys are placed by scan code, by key code when there is none. It counts the
+    keys pressed and shows the last key code. Only the chosen keyboard counts. Alt + Esc closes it.
+  - Touchpad tester: a click on the area captures the pointer, so the touchpad sends its raw fingers; each
+    finger draws a trace in its own color, with left, right and middle clicks counted. Esc closes it.
+  - Touchscreen tester: the whole window is the drawing area, several fingers at once in distinct colors.
+  - Tests: input devices (a keyboard and something to point with: touchpad, mouse or touchscreen) and
+    keyboard keys (every key of the layout pressed in the last keyboard tester session).
+- **Audio**: outputs and inputs from `AudioManager` (built-in, headphones, USB, HDMI, Bluetooth, line;
+  casting, call and tuner endpoints left out), each list with the device to use.
+  - Speakers: a test tone button per channel of the chosen output (left, right and every other channel
+    of its widest channel mask). Test: a tone on each channel in turn; warns when the volume is off.
+  - Microphone: record up to 10 s with a live level meter, then play the take back on the chosen output.
+    Test: records 2 s; fails when it cannot record, warns on silence, reports the loudest sound.
+- **Camera**: the cameras from `CameraManager` (front, back, external for USB, with the largest size and
+  its megapixels), kept up to date as USB cameras come and go, and a live preview of the chosen one.
+  Test: frames arrive and the picture is not dark (a covered lens), judged from the preview's frames
+  after a second for the exposure to settle.
 - **Task Manager**: opens PcTaskManager when it is installed.
 
 Every test reports Passed, Warning or Failed with a sentence; "See report" lists them. "Stop test" cancels
@@ -45,14 +67,22 @@ core).
 `/proc/stat`, `/proc/cpuinfo`, `/proc/meminfo`, `/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq`,
 temperature from `/sys/class/thermal` and `/sys/class/hwmon` (package sensors first: `x86_pkg_temp`,
 `coretemp`, `k10temp`, `zenpower`), the battery from `/sys/class/power_supply/*/uevent` (charge or energy
-units), storage from `StatFs`, and the network from `ConnectivityManager` and `WifiManager`. The captive
+units), storage from `StatFs`, the network from `ConnectivityManager` and `WifiManager`, input devices
+from `InputManager`/`InputDevice` (source mask, keyboard type, vendor and product ids, `isExternal`), key
+events from the tester's window (`KeyEvent` scan code and key code), touchpad fingers from captured
+pointer events (`SOURCE_TOUCHPAD`, scaled by the device's axis ranges), audio devices from `AudioManager`
+(`AudioTrack` for tones and playback, `AudioRecord` for the microphone), and cameras from `CameraManager`
+(`LENS_FACING`, YUV stream sizes) with the preview from CameraX. The captive
 portal check page is the system's own (`captive_portal_https_url`, AOSP default otherwise).
 
 ## Permissions
 
 `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE` (normal) and `NETWORK_SETTINGS` (signature,
 granted by the platform certificate): with it `WifiManager` returns the SSID and BSSID without location
-access. None is a privileged permission, so `etc/privapp-permissions-pcdiagnostics.xml` lists none.
+access. `RECORD_AUDIO` and `CAMERA` are runtime permissions: the Audio and Camera pages ask for them, and
+once refused they point to the app's settings; the tests fail with that sentence until they are granted.
+The microphone and camera features are declared optional, so the app installs on a PC without them. None
+is a privileged permission, so `etc/privapp-permissions-pcdiagnostics.xml` lists none.
 `largeHeap` gives the memory test room. The app defines
 `org.lineageos.pcdiagnostics.permission.READ_HARDWARE_SUMMARY` (signature) as the read permission of
 `HardwareSummaryProvider`; Settings runs as the system uid and passes it.
@@ -62,18 +92,28 @@ access. None is a privileged permission, so `etc/privapp-permissions-pcdiagnosti
 - `core/`: plain Kotlin, no Android. `SuiteRunner`/`SuiteState` (tests in order, worst outcome wins,
   cancel), the checks (`StressTest`, `CacheTest`, `FloatingPointAccuracyTest`, `PrimeSearchTest`,
   `MemoryTest`, `StorageTest`, `BatteryRateTest`, `LocalNetworkTest`, `NameResolutionTest`,
-  `InternetConnectivityTest`, `WifiTest`), `ConnectivitySuite`, `BatteryInfo`, readers, `CpuMonitor` and
-  `HardwareRow`.
-- `src/`: `DiagnosticsViewModel` (readings once a second while visible, one `SuiteController` per card),
-  `SystemSource`, `NetworkReader`/`AndroidNetworkProbe`, `HardwareSummaryProvider` (Settings > About
-  summaries), and the Compose UI in `ui/`.
+  `InternetConnectivityTest`, `WifiTest`, `InputDevicesTest`, `KeyCoverageTest`, `SpeakerTest`,
+  `MicrophoneTest`, `CameraTest`), `ConnectivitySuite`, `InputSuite`, `BatteryInfo`, readers,
+  `CpuMonitor`, `HardwareRow`, and for the new pages:
+  - `Input.kt`: `InputDeviceInfo` and its kind from the source mask, `InputDevices` (list, scaling).
+  - `Keyboard.kt`: `KeyboardLayout` (`US_ANSI`, `ISO`, `ABNT2`; rows of slots, cells in key units, scan
+    code then key code lookup, layout per country) and `KeyboardState` (held, pressed, last key).
+  - `Touch.kt`: `TouchSession` (a trace per finger, a free color per finger down, clicks per button).
+  - `Audio.kt`: device kinds, `SpeakerChannel` (channel masks), `TestTone`, `AudioLevel` (dBFS, meter).
+  - `Camera.kt`: `CameraFacing`, `CameraDescription`, `Cameras`, `Luma` (average of a Y plane).
+- `src/`: `DiagnosticsViewModel` (readings once a second while visible, one `SuiteController` per card,
+  and one bench per device page), `SystemSource`, `NetworkReader`/`AndroidNetworkProbe`,
+  `HardwareSummaryProvider` (Settings > About summaries), `InputBench`/`InputReader`,
+  `AudioBench`/`AudioReader` (`AndroidTonePlayer`, `AndroidSoundRecorder`), `CameraBench`/`CameraReader`
+  (`CameraFrames`), and the Compose UI in `ui/` (`InputPage` and `InputTesters`, `AudioPage`,
+  `CameraPage`, `Permissions`).
 
 ## Tests
 
 ```sh
 core/run_tests.sh                        # JUnit tests of core/, with external/kotlinc and JUnit from prebuilts
-python3 -m unittest discover -s tests    # UI strings (both languages, same placeholders, no em dash), Settings rows in the manifest
-tools/typecheck.sh                       # compiles core + Compose UI against the prebuilts (needs a previous build's out/)
+python3 -m unittest discover -s tests    # UI strings (both languages, same placeholders, no em dash), Settings rows and runtime permissions in the manifest
+tools/typecheck.sh                       # compiles core + Compose UI against the prebuilts, CameraX included (needs a previous build's out/)
 ```
 
 In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
@@ -86,7 +126,12 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
 ## Not done yet
 
 - Not built or run on a device yet: only the host tests and the Compose typecheck have run.
-- Input (keyboard, touchpad, touchscreen), audio (speakers, microphone) and camera pages.
+- The keyboard tester sees only the keys the system passes to apps: shortcuts the system keeps (Meta,
+  Alt + Tab and the like) do not reach it.
+- Raw touchpad fingers need the touchpad input stack of Android 14 and later, which reports
+  `SOURCE_TOUCHPAD` events while the pointer is captured.
+- The speaker test cannot hear the tone: it passes when every channel played, and the sentence asks to
+  check any speaker that stayed silent.
 - "Learn more" links and a help page.
 - SELinux: the device is permissive. Enforcing needs `system_app`/`platform_app` read access to
   `sysfs_thermal`, hwmon and power supply nodes; the rules are not written.
@@ -97,5 +142,6 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
 
 - [LineageOS](https://lineageos.org) ([GitHub](https://github.com/LineageOS)): the base system and build this is part of.
 - [Android Open Source Project](https://source.android.com): the platform, its APIs and build system.
+- [Android Jetpack](https://developer.android.com/jetpack): Compose for the UI and CameraX for the camera preview, used as libraries.
 
 Thanks to everyone behind these projects. Files taken from them keep their original licenses and copyright notices.
