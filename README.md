@@ -138,6 +138,18 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
 - The storage read speed comes from the page cache right after writing, so it measures memory more than
   the disk; the check is about data coming back intact.
 
+## Screenshots
+
+Taken in QEMU/KVM at 1920x1080 from the live ISO.
+
+![Diagnostics, overview page.](docs/screenshots/11-diagnostics.png)
+
+Diagnostics, overview page.
+
+![Settings > About device with the CPU, RAM and storage rows.](docs/screenshots/20-settings-about.png)
+
+Settings > About device with the CPU, RAM and storage rows.
+
 ## Credits
 
 - [LineageOS](https://lineageos.org) ([GitHub](https://github.com/LineageOS)): the base system and build this is part of.
