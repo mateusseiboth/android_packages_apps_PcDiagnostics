@@ -46,6 +46,7 @@ A navigation drawer (kept open on wide windows, behind a menu button on narrow o
   its megapixels), kept up to date as USB cameras come and go, and a live preview of the chosen one.
   Test: frames arrive and the picture is not dark (a covered lens), judged from the preview's frames
   after a second for the exposure to settle.
+- **Logs**: saves the system logs to a zip file for a bug report (see "Saving logs for a bug report").
 - **Task Manager**: opens PcTaskManager when it is installed.
 
 Every test reports Passed, Warning or Failed with a sentence; "See report" lists them. "Stop test" cancels
@@ -75,14 +76,48 @@ pointer events (`SOURCE_TOUCHPAD`, scaled by the device's axis ranges), audio de
 (`LENS_FACING`, YUV stream sizes) with the preview from CameraX. The captive
 portal check page is the system's own (`captive_portal_https_url`, AOSP default otherwise).
 
+## Saving logs for a bug report
+
+Works without a network, so it is the way to report a Wi-Fi that does not work:
+
+1. Plug in a USB drive (or use any folder the file picker offers).
+2. Open **Diagnostics**, then **Logs** in the drawer, and press **Save logs**.
+3. The file picker opens with a name like `lineage-pc-logs-20261126-1432.zip`; pick the USB drive and save.
+4. Android asks whether Diagnostics may access all device logs: allow it. Refused, `logcat.txt` and
+   `kernel.txt` hold only Diagnostics' own lines.
+5. Wait for "Logs saved.", then attach the zip to the bug report.
+
+The zip holds:
+
+| File | Content |
+| --- | --- |
+| `logcat.txt` | `logcat -d -b all -v threadtime` (every buffer, the kernel's included) |
+| `kernel.txt` | `logcat -d -b kernel`; `dmesg` when that fails or prints nothing |
+| `getprop.txt` | `getprop` (every system property) |
+| `modules.txt` | `/proc/modules` |
+| `pci.txt` | every `/sys/bus/pci/devices` entry: vendor, device, subsystem ids, class, bound driver |
+| `usb.txt` | every `/sys/bus/usb/devices` entry (devices and interfaces): ids, class, names, bound driver |
+| `network.txt` | `/sys/class/net/*` (operstate, address, driver), `/sys/class/rfkill/*` (type, name, state, soft, hard), and Wi-Fi and Bluetooth enabled and state from `WifiManager` and `BluetoothAdapter` |
+| `dumpsys-wifi.txt`, `dumpsys-bluetooth.txt` | `dumpsys wifi`, `dumpsys bluetooth_manager` |
+| `build.txt` | fingerprint, display id, type, Android version, SDK, security patch, model, kernel version and `/proc/version` |
+
+Every file is best effort: a collector that fails keeps what it wrote and its error (with the stack trace)
+in its own file, and the other files are still written. Only a destination that fails (a USB drive pulled
+out, a full disk) stops the save with "Could not save the logs.". The driver is the name the `driver` link
+points to, `none` when nothing is bound.
+
 ## Permissions
 
 `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE` (normal) and `NETWORK_SETTINGS` (signature,
 granted by the platform certificate): with it `WifiManager` returns the SSID and BSSID without location
 access. `RECORD_AUDIO` and `CAMERA` are runtime permissions: the Audio and Camera pages ask for them, and
 once refused they point to the app's settings; the tests fail with that sentence until they are granted.
-The microphone and camera features are declared optional, so the app installs on a PC without them. None
-is a privileged permission, so `etc/privapp-permissions-pcdiagnostics.xml` lists none.
+The microphone and camera features are declared optional, so the app installs on a PC without them.
+`READ_LOGS` (logcat) and `DUMP` (dumpsys) are for the logs. They are signature|privileged permissions: a
+privileged app gets them only when `etc/privapp-permissions-pcdiagnostics.xml` lists them, even with the
+platform certificate, so that file lists both. With `READ_LOGS`, Android still asks the person before an
+app reads all device logs (`LogcatManagerService`, the answer kept for a minute); refused, logd gives the app
+only its own lines.
 `largeHeap` gives the memory test room. The app defines
 `org.lineageos.pcdiagnostics.permission.READ_HARDWARE_SUMMARY` (signature) as the read permission of
 `HardwareSummaryProvider`; Settings runs as the system uid and passes it.
@@ -101,19 +136,24 @@ is a privileged permission, so `etc/privapp-permissions-pcdiagnostics.xml` lists
   - `Touch.kt`: `TouchSession` (a trace per finger, a free color per finger down, clicks per button).
   - `Audio.kt`: device kinds, `SpeakerChannel` (channel masks), `TestTone`, `AudioLevel` (dBFS, meter).
   - `Camera.kt`: `CameraFacing`, `CameraDescription`, `Cameras`, `Luma` (average of a Y plane).
+  - `LogBundle.kt`: `LogBundle` (the zip, a part's error kept in its file, progress, the file name),
+    `LogPart`, `CommandRunner` and `ProcessCommandRunner`.
+  - `LogCollectors.kt`: `LogCollectors` (the files in order, from `LogSources`: sysfs and proc roots,
+    commands, the app's radio and build fields), `SysfsTable` (`PCI`, `USB`, `NET`, `RFKILL`: one line per
+    sysfs entry with its attributes and driver).
 - `src/`: `DiagnosticsViewModel` (readings once a second while visible, one `SuiteController` per card,
   and one bench per device page), `SystemSource`, `NetworkReader`/`AndroidNetworkProbe`,
   `HardwareSummaryProvider` (Settings > About summaries), `InputBench`/`InputReader`,
   `AudioBench`/`AudioReader` (`AndroidTonePlayer`, `AndroidSoundRecorder`), `CameraBench`/`CameraReader`
   (`CameraFrames`), and the Compose UI in `ui/` (`InputPage` and `InputTesters`, `AudioPage`,
-  `CameraPage`, `Permissions`).
+  `CameraPage`, `Permissions`), and `LogsBench`/`LogsReader` with `ui/LogsPage` (the logs zip).
 
 ## Tests
 
 ```sh
 core/run_tests.sh                        # JUnit tests of core/, with external/kotlinc and JUnit from prebuilts
-python3 -m unittest discover -s tests    # UI strings (both languages, same placeholders, no em dash), Settings rows and runtime permissions in the manifest
-tools/typecheck.sh                       # compiles core + Compose UI against the prebuilts, CameraX included (needs a previous build's out/)
+python3 -m unittest discover -s tests    # UI strings (both languages, same placeholders, no em dash), Settings rows, runtime permissions in the manifest, READ_LOGS and DUMP allowlisted
+tools/typecheck.sh                       # compiles core + Compose UI against the prebuilts, CameraX and the Bluetooth module included (needs a previous build's out/)
 ```
 
 In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
@@ -121,7 +161,8 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
 ## Build integration
 
 - local manifest: `<project path="packages/apps/PcDiagnostics" name="android_packages_apps_PcDiagnostics" remote="pc" revision="lineage-24.0" />`
-- `device.mk`: `PRODUCT_PACKAGES += PcDiagnostics` (pulls `privapp-permissions-pcdiagnostics.xml`)
+- `device.mk`: `PRODUCT_PACKAGES += PcDiagnostics` (pulls `privapp-permissions-pcdiagnostics.xml`, which
+  allowlists `READ_LOGS` and `DUMP`)
 
 ## Not done yet
 
@@ -134,7 +175,8 @@ In Soong: `PcDiagnosticsCoreTests` (`java_test_host`, `atest`-able).
   check any speaker that stayed silent.
 - "Learn more" links and a help page.
 - SELinux: the device is permissive. Enforcing needs `system_app`/`platform_app` read access to
-  `sysfs_thermal`, hwmon and power supply nodes; the rules are not written.
+  `sysfs_thermal`, hwmon and power supply nodes, and for the logs running `logcat`, `dmesg`, `getprop` and
+  `dumpsys` and reading the PCI, USB, net and rfkill nodes; the rules are not written.
 - The storage read speed comes from the page cache right after writing, so it measures memory more than
   the disk; the check is about data coming back intact.
 

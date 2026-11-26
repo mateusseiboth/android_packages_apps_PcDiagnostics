@@ -9,10 +9,14 @@
 - A new check: a `TestName`, its `FindingKey`s, a string per key in both languages, and the maps in
   `ui/Texts.kt`.
 - Tables over if/else: `OVERALL_RULES`, `RateKind`, `judge(...)` rules, `Texts`, `CHIP_STYLES`, `LAYOUTS`,
-  `KIND_RULES`, `KEY_LOOKS`, `TESTER_GROUPS`, `RECORD_ACTIONS`, `PERMISSION_STEPS`.
+  `KIND_RULES`, `KEY_LOOKS`, `TESTER_GROUPS`, `RECORD_ACTIONS`, `PERMISSION_STEPS`, `SysfsTable`'s tables,
+  `STATUS_ROWS` (logs page).
   Names start with an English verb or prefix.
 - Device pages (input, audio, camera) keep their state in a `*Bench` owned by `DiagnosticsViewModel`; the
   Android side of a check implements a core interface (`TonePlayer`, `SoundRecorder`, `FrameSource`).
+- Logs page: a new file in the zip is a `LogPart` in `LogCollectors.build` (core) and a line in
+  `LogCollectorsTest`; a collector never aborts the save, only the destination does. A privileged
+  permission must be in `etc/privapp-permissions-pcdiagnostics.xml` (`tests/test_manifest.py`).
 - Runtime permissions are asked on the page (`ui/Permissions.kt`); `tests/test_manifest.py` lists them.
 - UI text: pt-BR in `res/values-pt`, English in `res/values`; what happened and what to do, no em dash, no
   design explanations (`tests/test_strings.py`).
