@@ -14,6 +14,10 @@
     <!-- Camera page: the preview and the camera test (runtime permission, asked on the page). -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <!-- Logs page: logcat (every buffer) and dumpsys wifi and bluetooth_manager. Privileged permissions,
+         listed in etc/privapp-permissions-pcdiagnostics.xml. -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.DUMP" />
 
     <!-- Settings (system uid) reads the About rows' summaries from HardwareSummaryProvider. -->
     <permission

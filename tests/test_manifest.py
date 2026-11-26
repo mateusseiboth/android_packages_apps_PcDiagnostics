@@ -1,5 +1,5 @@
-"""Settings > About rows (three tiles whose summaries come from the app's provider) and the runtime
-permissions of the audio and camera pages."""
+"""Settings > About rows (three tiles whose summaries come from the app's provider), the runtime
+permissions of the audio and camera pages, and the privileged permissions of the logs."""
 import re
 import unittest
 import xml.etree.ElementTree as ET
@@ -88,6 +88,23 @@ class RuntimePermissionsTest(unittest.TestCase):
         allowlist = ET.parse(HERE / "etc/privapp-permissions-pcdiagnostics.xml").getroot()
         listed = {p.get("name") for p in allowlist.iter("permission")}
         self.assertFalse(listed & set(RUNTIME_PERMISSIONS))
+
+
+# The logs page runs logcat and dumpsys. Both permissions are signature|privileged: a privileged app gets
+# them only when its allowlist names them, even with the platform certificate.
+PRIVILEGED_PERMISSIONS = {"android.permission.READ_LOGS", "android.permission.DUMP"}
+
+
+class PrivilegedPermissionsTest(unittest.TestCase):
+    def test_the_logs_permissions_are_requested(self):
+        requested = {p.get(f"{ANDROID}name") for p in read_manifest().findall("uses-permission")}
+        self.assertLessEqual(PRIVILEGED_PERMISSIONS, requested)
+
+    def test_they_are_on_the_privileged_allowlist(self):
+        allowlist = ET.parse(HERE / "etc/privapp-permissions-pcdiagnostics.xml").getroot()
+        entry = allowlist.find("privapp-permissions")
+        self.assertEqual(entry.get("package"), read_manifest().get("package"))
+        self.assertEqual({p.get("name") for p in entry.iter("permission")}, PRIVILEGED_PERMISSIONS)
 
 
 if __name__ == "__main__":
