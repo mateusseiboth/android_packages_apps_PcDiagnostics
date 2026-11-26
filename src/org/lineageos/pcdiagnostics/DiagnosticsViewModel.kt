@@ -36,7 +36,7 @@ import org.lineageos.pcdiagnostics.core.StressTest
 
 enum class SuiteKind { CPU, MEMORY, STORAGE, BATTERY, CONNECTIVITY, INPUT, SPEAKERS, MICROPHONE, CAMERA }
 
-enum class Page { OVERVIEW, CONNECTIVITY, INPUT, AUDIO, CAMERA }
+enum class Page { OVERVIEW, CONNECTIVITY, INPUT, AUDIO, CAMERA, LOGS }
 
 /** What the cards show, read once a second while the screen is visible. */
 data class LiveReadings(
@@ -67,6 +67,7 @@ class DiagnosticsViewModel(application: Application) : AndroidViewModel(applicat
     val input = InputBench(application, viewModelScope)
     val audio = AudioBench(application, viewModelScope)
     val camera = CameraBench(application, viewModelScope)
+    val logs = LogsBench(application, viewModelScope)
 
     private val _page = MutableStateFlow(Page.OVERVIEW)
     val page: StateFlow<Page> = _page.asStateFlow()

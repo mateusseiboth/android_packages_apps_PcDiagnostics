@@ -233,4 +233,11 @@
     <string name="finding_camera_no_permission">Camera access is off. Allow it and run the test again.</string>
     <string name="finding_camera_no_frames">The camera sent no picture. Close other apps using it and try again.</string>
     <string name="finding_camera_dark">The picture is very dark. Check that nothing covers the camera.</string>
+    <string name="page_logs">Logs</string>
+    <string name="page_logs_subtitle">For bug reports</string>
+    <string name="logs_description">Save the system logs to a file, for example on a USB drive, and attach it to your bug report. If asked, allow access to the device logs.</string>
+    <string name="logs_save">Save logs</string>
+    <string name="logs_saving">Saving logs: %1$d of %2$d</string>
+    <string name="logs_saved">Logs saved.</string>
+    <string name="logs_failed">Could not save the logs.</string>
 </resources>

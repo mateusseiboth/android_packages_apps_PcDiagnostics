@@ -37,8 +37,9 @@ CP=$CP$INTER/external/kotlinx.coroutines/kotlinx_coroutines/linux_glibc_common/c
 CP=$CP:$INTER/frameworks/base/framework-minus-apex/android_common/combined/framework.jar
 # CameraX returns ListenableFuture (guava-listenablefuture-prebuilt-jar in Soong).
 CP=$CP:$TOP/prebuilts/tools/common/m2/repository/com/google/guava/guava/listenablefuture/1.0/listenablefuture-1.0.jar
-# ConnectivityManager and WifiManager live in their mainline modules.
-for m in packages/modules/Connectivity/framework/framework-connectivity.impl packages/modules/Wifi/framework/framework-wifi.impl; do
+# ConnectivityManager, WifiManager and BluetoothAdapter live in their mainline modules.
+for m in packages/modules/Connectivity/framework/framework-connectivity.impl packages/modules/Wifi/framework/framework-wifi.impl \
+         packages/modules/Bluetooth/framework/framework-bluetooth.impl; do
   CP=$CP:$(ls "$INTER/$m"/android_common*/combined/*.jar "$INTER/$m"/android_common*/turbine-combined/*.jar 2>/dev/null | head -1)
 done
 JAVA_OPTS="-Xmx1536m" nice -n 19 "$TOP/external/kotlinc/bin/kotlinc" -no-reflect -jvm-target 21 \

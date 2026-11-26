@@ -233,4 +233,11 @@
     <string name="finding_camera_no_permission">O acesso à câmera está desativado. Permita o acesso e execute o teste de novo.</string>
     <string name="finding_camera_no_frames">A câmera não enviou imagem. Feche outros apps que a usam e tente de novo.</string>
     <string name="finding_camera_dark">A imagem está muito escura. Verifique se nada cobre a câmera.</string>
+    <string name="page_logs">Logs</string>
+    <string name="page_logs_subtitle">Para relatar problemas</string>
+    <string name="logs_description">Salve os logs do sistema em um arquivo, por exemplo em um pendrive, e anexe-o ao seu relato de problema. Se for solicitado, permita o acesso aos logs do dispositivo.</string>
+    <string name="logs_save">Salvar logs</string>
+    <string name="logs_saving">Salvando logs: %1$d de %2$d</string>
+    <string name="logs_saved">Logs salvos.</string>
+    <string name="logs_failed">Não foi possível salvar os logs.</string>
 </resources>

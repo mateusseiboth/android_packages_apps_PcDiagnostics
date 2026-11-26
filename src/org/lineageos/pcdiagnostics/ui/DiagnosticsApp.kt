@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Memory
@@ -58,6 +59,7 @@ private val DESTINATIONS = linkedMapOf(
     Page.INPUT to Destination(R.string.page_input, R.string.page_input_subtitle, Icons.Outlined.Keyboard),
     Page.AUDIO to Destination(R.string.page_audio, R.string.page_audio_subtitle, Icons.Outlined.Speaker),
     Page.CAMERA to Destination(R.string.page_camera, R.string.page_camera_subtitle, Icons.Outlined.PhotoCamera),
+    Page.LOGS to Destination(R.string.page_logs, R.string.page_logs_subtitle, Icons.Outlined.BugReport),
 )
 
 private val TASK_MANAGER = Destination(R.string.page_task_manager, R.string.page_task_manager_subtitle, Icons.Outlined.Memory)
@@ -68,6 +70,7 @@ private val PAGES: Map<Page, @Composable (DiagnosticsViewModel, (Intent) -> Unit
     Page.INPUT to { viewModel, _ -> InputPage(viewModel) },
     Page.AUDIO to { viewModel, onOpen -> AudioPage(viewModel, onOpen) },
     Page.CAMERA to { viewModel, onOpen -> CameraPage(viewModel, onOpen) },
+    Page.LOGS to { viewModel, _ -> LogsPage(viewModel) },
 )
 
 private val WIDE_WINDOW = 840.dp
