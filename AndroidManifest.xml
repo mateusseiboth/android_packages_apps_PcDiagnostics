@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The system uid: since Android 13 logd hands its buffers (kernel included) to system/root without a
+     consent dialog, and the logs page needs them all for bug reports. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.lineageos.pcdiagnostics">
+    package="org.lineageos.pcdiagnostics"
+    android:sharedUserId="android.uid.system">
 
     <!-- Connectivity tests: name resolution and the captive portal check page. -->
     <uses-permission android:name="android.permission.INTERNET" />

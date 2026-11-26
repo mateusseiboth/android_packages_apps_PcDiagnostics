@@ -106,6 +106,11 @@ class PrivilegedPermissionsTest(unittest.TestCase):
         self.assertEqual(entry.get("package"), read_manifest().get("package"))
         self.assertEqual({p.get("name") for p in entry.iter("permission")}, PRIVILEGED_PERMISSIONS)
 
+    def test_it_runs_as_the_system_uid(self):
+        # Since Android 13 logd hands its buffers (kernel included) only to system/root uids without a
+        # consent dialog; READ_LOGS alone gave an empty logcat.txt and kernel.txt.
+        self.assertEqual(read_manifest().get(f"{ANDROID}sharedUserId"), "android.uid.system")
+
 
 if __name__ == "__main__":
     unittest.main()
