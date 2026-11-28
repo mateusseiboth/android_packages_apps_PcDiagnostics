@@ -192,6 +192,11 @@ Diagnostics, overview page.
 
 Settings > About device with the CPU, RAM and storage rows.
 
+## License
+
+Apache License 2.0, see [LICENSE](LICENSE). Copyright 2026 Mateus Seiboth. Third-party code keeps its own
+license (see Credits).
+
 ## Credits
 
 - [LineageOS](https://lineageos.org) ([GitHub](https://github.com/LineageOS)): the base system and build this is part of.
